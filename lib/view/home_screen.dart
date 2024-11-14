@@ -54,35 +54,48 @@ class HomeScreen extends StatelessWidget {
               padding: const EdgeInsets.all(8),
               child: ListView.builder(
                   physics: const BouncingScrollPhysics(),
-                  itemCount: snapshot.data.length,
+                  itemCount: snapshot.data!.length,
                   itemBuilder: (context, index) {
                     return Container(
                       margin: const EdgeInsets.only(bottom: 4),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: ListTile(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
-                        tileColor: bgColor,
-                        title: Text(
-                          snapshot.data![index].displayNameWOExt,
-                          style: textStyle(
-                              fontWeight: FontWeight.bold, fontSize: 15),
-                        ),
-                        subtitle: Text(
-                          "${snapshot.data![index].artist}",
-                          style: textStyle(fontSize: 12),
-                        ),
-                        leading: Icon(
-                          Icons.music_note,
-                          color: whiteColor,
-                          size: 32,
-                        ),
-                        trailing: Icon(
-                          Icons.play_arrow,
-                          color: whiteColor,
-                          size: 26,
+                      child: Obx(
+                        () => ListTile(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
+                          tileColor: bgColor,
+                          title: Text(
+                            snapshot.data![index].displayNameWOExt,
+                            style: textStyle(
+                                fontWeight: FontWeight.bold, fontSize: 15),
+                          ),
+                          subtitle: Text(
+                            "${snapshot.data![index].artist}",
+                            style: textStyle(fontSize: 12),
+                          ),
+                          leading: QueryArtworkWidget(
+                            id: snapshot.data![index].id,
+                            type: ArtworkType.AUDIO,
+                            nullArtworkWidget: Icon(
+                              Icons.music_note,
+                              color: whiteColor,
+                              size: 32,
+                            ),
+                          ),
+                          trailing: controller.playingIndex.value == index &&
+                                  controller.isPlaying.value
+                              ? Icon(
+                                  Icons.play_arrow,
+                                  color: whiteColor,
+                                  size: 26,
+                                )
+                              : null,
+                          onTap: () {
+                            controller.playSong(
+                                snapshot.data![index].uri, index);
+                          },
                         ),
                       ),
                     );
