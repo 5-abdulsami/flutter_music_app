@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_music_app/constants/colors.dart';
 import 'package:flutter_music_app/constants/textstyle.dart';
+import 'package:flutter_music_app/controllers/player_controller.dart';
+import 'package:get/get.dart';
+import 'package:on_audio_query/on_audio_query.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    var controller = Get.put(PlayerController());
+
     return Scaffold(
       backgroundColor: bgColor,
       appBar: AppBar(
@@ -28,42 +33,63 @@ class HomeScreen extends StatelessWidget {
           style: textStyle(),
         ),
       ),
-      body: Padding(
-        padding: EdgeInsets.all(8),
-        child: ListView.builder(
-            physics: BouncingScrollPhysics(),
-            itemCount: 100,
-            itemBuilder: (context, index) {
-              return Container(
-                margin: EdgeInsets.only(bottom: 4),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: ListTile(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                  tileColor: bgColor,
-                  title: Text(
-                    "Music Name: ",
-                    style: textStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                  ),
-                  subtitle: Text(
-                    "Artist Name: ",
-                    style: textStyle(fontSize: 12),
-                  ),
-                  leading: Icon(
-                    Icons.music_note,
-                    color: whiteColor,
-                    size: 32,
-                  ),
-                  trailing: Icon(
-                    Icons.play_arrow,
-                    color: whiteColor,
-                    size: 26,
-                  ),
-                ),
-              );
-            }),
+      body: FutureBuilder<List<SongModel>>(
+        future: controller.audioQuery.querySongs(
+            ignoreCase: true,
+            orderType: OrderType.ASC_OR_SMALLER,
+            sortType: null,
+            uriType: UriType.EXTERNAL),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.data == null) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (snapshot.data.isEmpty) {
+            return Text(
+              "No Song Found",
+              style: textStyle(),
+            );
+          } else {
+            return Padding(
+              padding: const EdgeInsets.all(8),
+              child: ListView.builder(
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: snapshot.data.length,
+                  itemBuilder: (context, index) {
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 4),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: ListTile(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                        tileColor: bgColor,
+                        title: Text(
+                          snapshot.data![index].displayNameWOExt,
+                          style: textStyle(
+                              fontWeight: FontWeight.bold, fontSize: 15),
+                        ),
+                        subtitle: Text(
+                          "${snapshot.data![index].artist}",
+                          style: textStyle(fontSize: 12),
+                        ),
+                        leading: Icon(
+                          Icons.music_note,
+                          color: whiteColor,
+                          size: 32,
+                        ),
+                        trailing: Icon(
+                          Icons.play_arrow,
+                          color: whiteColor,
+                          size: 26,
+                        ),
+                      ),
+                    );
+                  }),
+            );
+          }
+        },
       ),
     );
   }
