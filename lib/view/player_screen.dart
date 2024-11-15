@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_music_app/constants/colors.dart';
 import 'package:flutter_music_app/constants/textstyle.dart';
+import 'package:flutter_music_app/controllers/player_controller.dart';
+import 'package:get/get.dart';
+import 'package:on_audio_query/on_audio_query.dart';
 
 class PlayerScreen extends StatelessWidget {
-  const PlayerScreen({super.key});
+  final SongModel data;
+  const PlayerScreen({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {
+    var controller = Get.find<PlayerController>();
     return Scaffold(
       backgroundColor: bgColor,
       appBar: AppBar(),
@@ -14,10 +19,21 @@ class PlayerScreen extends StatelessWidget {
         children: [
           Expanded(
             child: Container(
+              clipBehavior: Clip.antiAliasWithSaveLayer,
+              height: 300,
+              width: 300,
               alignment: Alignment.center,
-              decoration:
-                  BoxDecoration(color: Colors.red, shape: BoxShape.circle),
-              child: Icon(Icons.music_note),
+              decoration: BoxDecoration(shape: BoxShape.circle),
+              child: QueryArtworkWidget(
+                id: data.id,
+                type: ArtworkType.AUDIO,
+                artworkHeight: double.infinity,
+                nullArtworkWidget: Icon(
+                  Icons.music_note,
+                  size: 48,
+                  color: whiteColor,
+                ),
+              ),
             ),
           ),
           SizedBox(
@@ -32,8 +48,11 @@ class PlayerScreen extends StatelessWidget {
                       BorderRadius.vertical(top: Radius.circular(16))),
               child: Column(
                 children: [
+                  SizedBox(
+                    height: 12,
+                  ),
                   Text(
-                    "Music Name",
+                    data.displayNameWOExt,
                     style: textStyle(
                         color: bgColor,
                         fontWeight: FontWeight.bold,
@@ -43,7 +62,7 @@ class PlayerScreen extends StatelessWidget {
                     height: 12,
                   ),
                   Text(
-                    "Artist Name",
+                    data.artist.toString(),
                     style: textStyle(color: bgColor, fontSize: 20),
                   ),
                   SizedBox(
@@ -82,17 +101,30 @@ class PlayerScreen extends StatelessWidget {
                           color: bgDarkColor,
                         ),
                       ),
-                      CircleAvatar(
-                        radius: 35,
-                        backgroundColor: bgColor,
-                        child: Transform.scale(
-                          scale: 2.5,
-                          child: IconButton(
-                            onPressed: () {},
-                            icon: Icon(
-                              Icons.play_arrow_rounded,
-                              size: 54,
-                              color: whiteColor,
+                      Obx(
+                        () => CircleAvatar(
+                          radius: 35,
+                          backgroundColor: bgColor,
+                          child: Transform.scale(
+                            scale: 2.5,
+                            child: IconButton(
+                              onPressed: () {
+                                if (controller.isPlaying.value) {
+                                  controller.audioPlayer.pause();
+                                  controller.isPlaying(false);
+                                } else {
+                                  controller.audioPlayer.play();
+                                  controller.isPlaying(true);
+                                }
+                              },
+                              icon: controller.isPlaying.value
+                                  ? Icon(Icons.pause,
+                                      size: 54, color: whiteColor)
+                                  : Icon(
+                                      Icons.play_arrow_rounded,
+                                      size: 54,
+                                      color: whiteColor,
+                                    ),
                             ),
                           ),
                         ),

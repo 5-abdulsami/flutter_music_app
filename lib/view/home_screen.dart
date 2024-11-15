@@ -73,7 +73,7 @@ class HomeScreen extends StatelessWidget {
                                 fontWeight: FontWeight.bold, fontSize: 15),
                           ),
                           subtitle: Text(
-                            "${snapshot.data![index].artist}",
+                            snapshot.data![index].artist,
                             style: textStyle(fontSize: 12),
                           ),
                           leading: QueryArtworkWidget(
@@ -94,9 +94,13 @@ class HomeScreen extends StatelessWidget {
                                 )
                               : null,
                           onTap: () {
-                            Get.to(() => PlayerScreen());
-                            // controller.playSong(
-                            //     snapshot.data![index].uri, index);
+                            Get.to(
+                                () => PlayerScreen(
+                                      data: snapshot.data![index],
+                                    ),
+                                transition: Transition.downToUp);
+                            controller.playSong(
+                                snapshot.data![index].uri, index);
                           },
                         ),
                       ),
