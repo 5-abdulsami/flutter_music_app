@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
@@ -11,6 +13,12 @@ class PlayerController extends GetxController {
   var playingIndex = 0.obs;
   var isPlaying = false.obs;
 
+  var duration = ''.obs;
+  var position = ''.obs;
+
+  var max = 0.0.obs;
+  var value = 0.0.obs;
+
   @override
   void onInit() {
     // TODO: implement onInit
@@ -23,9 +31,26 @@ class PlayerController extends GetxController {
       audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(uri!)));
       audioPlayer.play();
       isPlaying(true);
+      updatePosition();
     } catch (e) {
       print(e.toString());
     }
+  }
+
+  updatePosition() {
+    audioPlayer.durationStream.listen((d) {
+      duration.value = d.toString().split(".")[0];
+      max.value = d!.inSeconds.toDouble();
+    });
+    audioPlayer.positionStream.listen((p) {
+      position.value = p.toString().split('.')[0];
+      value.value = p.inSeconds.toDouble();
+    });
+  }
+
+  changeDurationToSeconds(seconds) {
+    var dur = Duration(seconds: seconds);
+    audioPlayer.seek(dur);
   }
 
   checkPermission() async {
