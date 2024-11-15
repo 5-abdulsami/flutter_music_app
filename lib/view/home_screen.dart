@@ -70,11 +70,11 @@ class HomeScreen extends StatelessWidget {
                           title: Text(
                             snapshot.data![index].displayNameWOExt,
                             style: textStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15),
+                                fontWeight: FontWeight.bold, size: 15),
                           ),
                           subtitle: Text(
                             snapshot.data![index].artist,
-                            style: textStyle(fontSize: 12),
+                            style: textStyle(size: 12),
                           ),
                           leading: QueryArtworkWidget(
                             id: snapshot.data![index].id,

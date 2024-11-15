@@ -1,6 +1,3 @@
-import 'dart:ffi';
-
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
@@ -21,8 +18,19 @@ class PlayerController extends GetxController {
 
   @override
   void onInit() {
-    // TODO: implement onInit
+    super.onInit();
     checkPermission();
+  }
+
+  updatePosition() {
+    audioPlayer.durationStream.listen((d) {
+      duration.value = d.toString().split(".")[0];
+      max.value = d!.inSeconds.toDouble();
+    });
+    audioPlayer.positionStream.listen((p) {
+      position.value = p.toString().split('.')[0];
+      value.value = p.inSeconds.toDouble();
+    });
   }
 
   playSong(String? uri, index) {
@@ -35,17 +43,6 @@ class PlayerController extends GetxController {
     } catch (e) {
       print(e.toString());
     }
-  }
-
-  updatePosition() {
-    audioPlayer.durationStream.listen((d) {
-      duration.value = d.toString().split(".")[0];
-      max.value = d!.inSeconds.toDouble();
-    });
-    audioPlayer.positionStream.listen((p) {
-      position.value = p.toString().split('.')[0];
-      value.value = p.inSeconds.toDouble();
-    });
   }
 
   changeDurationToSeconds(seconds) {

@@ -62,7 +62,7 @@ class PlayerScreen extends StatelessWidget {
                       style: textStyle(
                           color: bgColor,
                           fontWeight: FontWeight.bold,
-                          fontSize: 24),
+                          size: 24),
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 2,
@@ -72,7 +72,7 @@ class PlayerScreen extends StatelessWidget {
                     ),
                     Text(
                       data[controller.playingIndex.value].artist.toString(),
-                      style: textStyle(color: bgColor, fontSize: 20),
+                      style: textStyle(color: bgColor, size: 20),
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 2,
@@ -92,8 +92,9 @@ class PlayerScreen extends StatelessWidget {
                                   thumbColor: sliderColor,
                                   activeColor: sliderColor,
                                   inactiveColor: bgColor,
-                                  min:
-                                      Duration(seconds: 0).inSeconds.toDouble(),
+                                  min: const Duration(seconds: 0)
+                                      .inSeconds
+                                      .toDouble(),
                                   max: controller.max.value,
                                   value: controller.value.value,
                                   onChanged: (newValue) {
@@ -131,7 +132,7 @@ class PlayerScreen extends StatelessWidget {
                             radius: 35,
                             backgroundColor: bgColor,
                             child: Transform.scale(
-                              scale: 2.5,
+                              scale: 1.4,
                               child: IconButton(
                                 onPressed: () {
                                   if (controller.isPlaying.value) {
@@ -144,10 +145,10 @@ class PlayerScreen extends StatelessWidget {
                                 },
                                 icon: controller.isPlaying.value
                                     ? Icon(Icons.pause,
-                                        size: 54, color: whiteColor)
+                                        size: 45, color: whiteColor)
                                     : Icon(
                                         Icons.play_arrow_rounded,
-                                        size: 54,
+                                        size: 45,
                                         color: whiteColor,
                                       ),
                               ),
